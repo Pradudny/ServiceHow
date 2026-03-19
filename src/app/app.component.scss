@@ -1,0 +1,16 @@
+.app-layout {
+  display: flex;
+  margin-top: 56px;
+}
+
+.main-content {
+  margin-left: 240px;
+  flex: 1;
+  min-height: calc(100vh - 56px);
+  background-color: #ffffff;
+  transition: margin-left 0.25s ease;
+
+  &.nav-collapsed {
+    margin-left: 64px;
+  }
+}

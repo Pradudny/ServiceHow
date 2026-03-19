@@ -1,0 +1,77 @@
+<div class="page-container">
+  @if (incident) {
+    <div class="detail-header">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Incidents
+      </button>
+      <div class="header-actions">
+        <span class="status-badge" [ngClass]="getStatusClass(incident.status)">
+          {{ incident.status }}
+        </span>
+        <button class="btn-edit" (click)="editIncident()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Edit
+        </button>
+        @if (incident.status !== 'Resolved' && incident.status !== 'Closed') {
+          <button class="btn-complete" (click)="completeIncident()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Complete
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="detail-card">
+      <h1>{{ incident.title }}</h1>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Created Date</span>
+          <span class="detail-value">{{ incident.createdDate }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">SLA Date</span>
+          <span class="detail-value">{{ incident.slaDate }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">{{ incident.status }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Assigned To</span>
+          <span class="detail-value">{{ incident.assignedTo }}</span>
+        </div>
+      </div>
+
+      <div class="description-section">
+        <h2>Description</h2>
+        <p>{{ incident.description }}</p>
+      </div>
+    </div>
+  } @else {
+    <div class="not-found">
+      <h2>Incident not found</h2>
+      <button class="btn-back" (click)="goBack()">Back to Incidents</button>
+    </div>
+  }
+</div>
+
+@if (showEditModal && incident) {
+  <app-create-incident-modal
+    [incident]="incident"
+    (close)="onModalClose()"
+    (save)="onModalSave($event)">
+  </app-create-incident-modal>
+}

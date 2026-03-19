@@ -1,0 +1,7 @@
+<app-header (toggleSideNav)="onToggleSideNav()"></app-header>
+<div class="app-layout">
+  <app-side-nav [collapsed]="sideNavCollapsed"></app-side-nav>
+  <main class="main-content" [class.nav-collapsed]="sideNavCollapsed">
+    <router-outlet />
+  </main>
+</div>

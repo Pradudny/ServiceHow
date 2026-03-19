@@ -1,0 +1,20 @@
+<nav class="side-nav"
+     [class.collapsed]="isVisuallyCollapsed"
+     (mouseenter)="onMouseEnter()"
+     (mouseleave)="onMouseLeave()">
+  <ul class="nav-list">
+    @for (item of navItems; track item.route) {
+      <li class="nav-item">
+        <a [routerLink]="item.route"
+           routerLinkActive="active"
+           class="nav-link"
+           [title]="isVisuallyCollapsed ? item.label : ''">
+          <span class="nav-icon">{{ item.icon }}</span>
+          @if (!isVisuallyCollapsed) {
+            <span class="nav-label">{{ item.label }}</span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+</nav>
