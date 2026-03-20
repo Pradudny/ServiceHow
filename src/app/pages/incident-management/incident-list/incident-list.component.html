@@ -15,7 +15,7 @@
     <table class="incident-table">
       <thead>
         <tr>
-          <th>Title</th>
+          <th>Title</th> 
           <th>Created Date</th>
           <th>SLA Date</th>
           <th>Status</th>
@@ -24,14 +24,14 @@
         </tr>
       </thead>
       <tbody>
-        @for (incident of incidents; track incident.id) {
-          <tr (click)="viewIncident(incident.id)" class="clickable-row">
+        @for (incident of incidents; track incident.incidentId) {
+          <tr (click)="viewIncident(incident.incidentId)" class="clickable-row">
             <td class="title-cell">{{ incident.title }}</td>
             <td>{{ incident.createdDate }}</td>
             <td>{{ incident.slaDate }}</td>
             <td>
               <span class="status-badge" [ngClass]="getStatusClass(incident.status)">
-                {{ incident.status }}
+                {{ getStatusLabel(incident.status) }}
               </span>
             </td>
             <td>{{ incident.assignedTo }}</td>

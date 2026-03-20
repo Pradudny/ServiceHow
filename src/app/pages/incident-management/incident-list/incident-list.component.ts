@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Incident } from '../../../models/incident.model';
+import { Incident, CreateIncidentRequest } from '../../../models/incident.model';
 import { IncidentService } from '../../../services/incident.service';
 import { CreateIncidentModalComponent } from '../create-incident-modal/create-incident-modal.component';
 
@@ -23,7 +23,14 @@ export class IncidentListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.incidents = this.incidentService.getIncidents();
+    this.loadIncidents();
+  }
+
+  loadIncidents(): void {
+    this.incidentService.getIncidents().subscribe({
+      next: (data) => this.incidents = data,
+      error: (err) => console.error('Failed to load incidents:', err)
+    });
   }
 
   viewIncident(id: number): void {
@@ -46,18 +53,40 @@ export class IncidentListComponent implements OnInit {
     this.editingIncident = null;
   }
 
-  onModalSave(data: Omit<Incident, 'id'>): void {
+  onModalSave(data: CreateIncidentRequest): void {
     if (this.editingIncident) {
-      this.incidentService.updateIncident(this.editingIncident.id, data);
+      this.incidentService.updateIncident(this.editingIncident.incidentId, data).subscribe({
+        next: () => {
+          this.loadIncidents();
+          this.showModal = false;
+          this.editingIncident = null;
+        },
+        error: (err) => console.error('Failed to update incident:', err)
+      });
     } else {
-      this.incidentService.addIncident(data);
+      this.incidentService.addIncident(data).subscribe({
+        next: () => {
+          this.loadIncidents();
+          this.showModal = false;
+          this.editingIncident = null;
+        },
+        error: (err) => console.error('Failed to create incident:', err)
+      });
     }
-    this.incidents = this.incidentService.getIncidents();
-    this.showModal = false;
-    this.editingIncident = null;
   }
 
   getStatusClass(status: string): string {
-    return 'status-' + status.toLowerCase().replace(/\s+/g, '-');
+    return 'status-' + status.toLowerCase().replace(/[_\s]+/g, '-');
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      'OPEN': 'Open',
+      'IN_PROGRESS': 'In Progress',
+      'ON_HOLD': 'On Hold',
+      'RESOLVED': 'Resolved',
+      'CLOSED': 'Closed'
+    };
+    return labels[status] || status;
   }
 }

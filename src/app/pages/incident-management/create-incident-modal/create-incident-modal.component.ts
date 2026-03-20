@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Incident } from '../../../models/incident.model';
+import { Incident, CreateIncidentRequest } from '../../../models/incident.model';
+import { UserDTO } from '../../../models/user.model';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-create-incident-modal',
@@ -13,28 +15,43 @@ import { Incident } from '../../../models/incident.model';
 export class CreateIncidentModalComponent implements OnInit {
   @Input() incident: Incident | null = null;
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<Omit<Incident, 'id'>>();
+  @Output() save = new EventEmitter<CreateIncidentRequest>();
+
+  users: UserDTO[] = [];
 
   form = {
     title: '',
     description: '',
     slaDate: '',
-    assignedTo: '',
-    status: 'Open' as Incident['status']
+    assignedTo:0,
+    status: 'OPEN' as Incident['status'],
+    priority: 'MEDIUM',
+    assignmentGroup: '',
+    createdBy: ''
   };
+
+  constructor(private userService: UserService) {}
 
   get isEditMode(): boolean {
     return this.incident !== null;
   }
 
   ngOnInit(): void {
+    this.userService.getUsers().subscribe({
+      next: (users) => this.users = users,
+      error: (err) => console.error('Failed to load users:', err)
+    });
+
     if (this.incident) {
       this.form = {
         title: this.incident.title,
         description: this.incident.description,
         slaDate: this.incident.slaDate,
-        assignedTo: this.incident.assignedTo,
-        status: this.incident.status
+        assignedTo: this.incident.assignedToId,
+        status: this.incident.status,
+        priority: this.incident.priority || 'MEDIUM',
+        assignmentGroup: this.incident.assignmentGroup || '',
+        createdBy: this.incident.createdBy || ''
       };
     }
   }
@@ -50,19 +67,26 @@ export class CreateIncidentModalComponent implements OnInit {
   }
 
   onSave(): void {
-    if (!this.form.title.trim() || !this.form.slaDate || !this.form.assignedTo.trim()) {
+    if (!this.form.title.trim() || !this.form.slaDate || !this.form.assignedTo) {
       return;
     }
-    const createdDate = this.incident
-      ? this.incident.createdDate
-      : new Date().toISOString().split('T')[0];
-    this.save.emit({
+    const now = new Date().toISOString();
+    const createdDate = this.incident ? this.incident.createdDate : now;
+
+    const request: CreateIncidentRequest = {
       title: this.form.title.trim(),
       description: this.form.description.trim(),
+      createdBy: this.form.createdBy.trim(),
       createdDate,
+      modifiedBy: '',
+      modifiedDate: now,
+      status: this.form.status,
+      priority: this.form.priority,
+      assignmentGroup: this.form.assignmentGroup.trim(),
       slaDate: this.form.slaDate,
-      assignedTo: this.form.assignedTo.trim(),
-      status: this.form.status
-    });
+      assignedTo: this.form.assignedTo
+    };
+
+    this.save.emit(request);
   }
 }

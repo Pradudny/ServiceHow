@@ -1,3 +1,47 @@
+:root {
+  --bg-body: #0f172a;
+  --bg-main: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-header: #162032;
+  --bg-hover: #334155;
+  --bg-input: #0f172a;
+
+  --border: #334155;
+  --border-light: #1e293b;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-soft: rgba(59, 130, 246, 0.15);
+  --accent-disabled: #1e3a5f;
+
+  --success: #10b981;
+  --success-hover: #059669;
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.1);
+  --danger-border: rgba(239, 68, 68, 0.3);
+
+  --header-bg: #0f172a;
+  --sidenav-bg: #162032;
+  --sidenav-active-bg: rgba(59, 130, 246, 0.15);
+  --sidenav-hover-bg: #1e293b;
+
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --shadow: rgba(0, 0, 0, 0.4);
+
+  --status-open-bg: rgba(251, 191, 36, 0.15);
+  --status-open-text: #fbbf24;
+  --status-progress-bg: rgba(59, 130, 246, 0.15);
+  --status-progress-text: #60a5fa;
+  --status-resolved-bg: rgba(16, 185, 129, 0.15);
+  --status-resolved-text: #34d399;
+  --status-closed-bg: rgba(100, 116, 139, 0.15);
+  --status-closed-text: #94a3b8;
+}
+
 *,
 *::before,
 *::after {
@@ -10,8 +54,8 @@ html, body {
   height: 100%;
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
-  color: #1e293b;
-  background-color: #f1f5f9;
+  color: var(--text-primary);
+  background-color: var(--bg-body);
 }
 
 a {

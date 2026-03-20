@@ -11,7 +11,7 @@
       </button>
       <div class="header-actions">
         <span class="status-badge" [ngClass]="getStatusClass(incident.status)">
-          {{ incident.status }}
+          {{ getStatusLabel(incident.status) }}
         </span>
         <button class="btn-edit" (click)="editIncident()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -21,7 +21,7 @@
           </svg>
           Edit
         </button>
-        @if (incident.status !== 'Resolved' && incident.status !== 'Closed') {
+        @if (incident.status !== 'RESOLVED' && incident.status !== 'CLOSED') {
           <button class="btn-complete" (click)="completeIncident()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -47,7 +47,7 @@
         </div>
         <div class="detail-item">
           <span class="detail-label">Status</span>
-          <span class="detail-value">{{ incident.status }}</span>
+          <span class="detail-value">{{ getStatusLabel(incident.status) }}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Assigned To</span>
