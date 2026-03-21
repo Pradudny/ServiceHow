@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AppModule, Team, Role, User } from '../models/admin.model';
+import { AppModule, ModuleDTO, TeamDTO, Team, Role, User, RolesFeaturesResponse, AuthorizeFeaturePayload } from '../models/admin.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
   private userApiUrl = '/api/users';
-
-  constructor(private http: HttpClient) {}
+  private modulesApiUrl = '/api/modules';
+  private teamApiUrl = '/api/team';
+  private rolesApiUrl = '/api/roles';
 
   private modules: AppModule[] = [
     {
@@ -92,6 +93,12 @@ export class AdminService {
     }
   ];
 
+  constructor(private http: HttpClient) {}
+
+  fetchModules(): Observable<ModuleDTO[]> {
+    return this.http.get<ModuleDTO[]>(this.modulesApiUrl);
+  }
+
   getModules(): AppModule[] {
     return this.modules;
   }
@@ -112,37 +119,38 @@ export class AdminService {
     return this.http.delete<void>(`${this.userApiUrl}/${id}`);
   }
 
-  addTeam(moduleId: string, data: Omit<Team, 'id'>): Team {
-    const mod = this.modules.find(m => m.id === moduleId);
-    if (!mod) throw new Error('Module not found');
-    const allTeams = this.modules.flatMap(m => m.teams);
-    const newId = allTeams.length > 0
-      ? Math.max(...allTeams.map(t => t.id)) + 1
-      : 1;
-    const team: Team = { id: newId, ...data };
-    mod.teams.push(team);
-    return team;
+  getTeamsByModule(moduleId: number): Observable<TeamDTO[]> {
+    return this.http.get<TeamDTO[]>(`${this.teamApiUrl}/${moduleId}`);
   }
 
-  updateTeam(moduleId: string, teamId: number, data: Partial<Omit<Team, 'id'>>): void {
-    const mod = this.modules.find(m => m.id === moduleId);
-    const team = mod?.teams.find(t => t.id === teamId);
-    if (team) {
-      Object.assign(team, data);
-    }
+  getTeamDetails(teamId: number): Observable<TeamDTO> {
+    return this.http.get<TeamDTO>(`${this.teamApiUrl}/team-details/${teamId}`);
   }
 
-  deleteTeam(moduleId: string, teamId: number): void {
-    const mod = this.modules.find(m => m.id === moduleId);
-    if (mod) {
-      mod.teams = mod.teams.filter(t => t.id !== teamId);
-    }
+  addTeam(data: Partial<TeamDTO>): Observable<TeamDTO> {
+    return this.http.post<TeamDTO>(`${this.teamApiUrl}/add-team`, data);
+  }
+
+  updateTeam(teamId: number, data: Partial<TeamDTO>): Observable<TeamDTO> {
+    return this.http.put<TeamDTO>(`${this.teamApiUrl}/update/${teamId}`, data);
+  }
+
+  addTeamMembers(teamId: number, userIds: number[]): Observable<TeamDTO> {
+    return this.http.put<TeamDTO>(`${this.teamApiUrl}/add-members/${teamId}`, userIds);
+  }
+
+  removeTeamMembers(teamId: number, userIds: number[]): Observable<TeamDTO> {
+    return this.http.put<TeamDTO>(`${this.teamApiUrl}/remove-members/${teamId}`, userIds);
+  }
+
+  deleteTeam(teamId: number): Observable<void> {
+    return this.http.delete<void>(`${this.teamApiUrl}/delete/${teamId}`);
   }
 
   toggleFeature(moduleId: string, roleId: number, featureId: number): void {
     const mod = this.modules.find(m => m.id === moduleId);
     const role = mod?.roles.find(r => r.id === roleId);
-    const feature = role?.features.find(f => f.id === featureId);
+    const feature = role?.features?.find(f => f.id === featureId);
     if (feature) {
       feature.enabled = !feature.enabled;
     }
@@ -152,5 +160,13 @@ export class AdminService {
     const names = new Set<string>();
     this.modules.forEach(m => m.roles.forEach(r => names.add(r.name)));
     return Array.from(names);
+  }
+
+  getRolesFeatures(moduleId: number): Observable<RolesFeaturesResponse> {
+    return this.http.get<RolesFeaturesResponse>(`${this.rolesApiUrl}/roles-features/${moduleId}`);
+  }
+
+  authorizeFeature(payload: AuthorizeFeaturePayload): Observable<any> {
+    return this.http.post(`${this.rolesApiUrl}/authorize-feature`, payload);
   }
 }

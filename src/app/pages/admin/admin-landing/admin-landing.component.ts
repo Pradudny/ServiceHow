@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AppModule } from '../../../models/admin.model';
+import { ModuleDTO } from '../../../models/admin.model';
 import { AdminService } from '../../../services/admin.service';
 
 interface AdminCard {
@@ -26,9 +26,19 @@ export class AdminLandingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const modules = this.adminService.getModules();
-    this.cards = modules.map(m => ({ id: m.id, name: m.name, type: 'module' as const }));
-    this.cards.push({ id: 'users', name: 'Users', type: 'static' });
+    this.cards = [{ id: 'users', name: 'Users', type: 'static' }];
+
+    this.adminService.fetchModules().subscribe({
+      next: (modules: ModuleDTO[]) => {
+        const moduleCards = modules.map(m => ({
+          id: String(m.moduleId),
+          name: m.moduleName,
+          type: 'module' as const
+        }));
+        this.cards = [...moduleCards, { id: 'users', name: 'Users', type: 'static' }];
+      },
+      error: (err) => console.error('Failed to load modules:', err)
+    });
   }
 
   viewCard(card: AdminCard): void {

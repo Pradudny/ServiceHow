@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AppModule, Team, Role } from '../../../models/admin.model';
+import { ModuleDTO, TeamDTO } from '../../../models/admin.model';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
@@ -11,16 +11,28 @@ import { AdminService } from '../../../services/admin.service';
   templateUrl: './module-card.component.html',
   styleUrl: './module-card.component.scss'
 })
-export class ModuleCardComponent {
-  @Input() module!: AppModule;
+export class ModuleCardComponent implements OnInit {
+  @Input() module!: ModuleDTO;
 
+  teams: TeamDTO[] = [];
   activeTab: 'teams' | 'roles' = 'teams';
 
   showTeamModal = false;
-  editingTeam: Team | null = null;
-  teamForm = { name: '', description: '' };
+  editingTeam: TeamDTO | null = null;
+  teamForm = { tName: '', tDesc: '' };
 
   constructor(private adminService: AdminService) {}
+
+  ngOnInit(): void {
+    this.loadTeams();
+  }
+
+  loadTeams(): void {
+    this.adminService.getTeamsByModule(this.module.moduleId).subscribe({
+      next: (data) => this.teams = data,
+      error: (err) => console.error('Failed to load teams:', err)
+    });
+  }
 
   switchTab(tab: 'teams' | 'roles'): void {
     this.activeTab = tab;
@@ -30,14 +42,14 @@ export class ModuleCardComponent {
 
   openAddTeam(): void {
     this.editingTeam = null;
-    this.teamForm = { name: '', description: '' };
+    this.teamForm = { tName: '', tDesc: '' };
     this.showTeamModal = true;
   }
 
-  openEditTeam(event: MouseEvent, team: Team): void {
+  openEditTeam(event: MouseEvent, team: TeamDTO): void {
     event.stopPropagation();
     this.editingTeam = team;
-    this.teamForm = { name: team.name, description: team.description };
+    this.teamForm = { tName: team.tName, tDesc: team.tDesc };
     this.showTeamModal = true;
   }
 
@@ -47,18 +59,26 @@ export class ModuleCardComponent {
   }
 
   saveTeam(): void {
-    if (!this.teamForm.name.trim()) return;
+    if (!this.teamForm.tName.trim()) return;
     if (this.editingTeam) {
-      this.adminService.updateTeam(this.module.id, this.editingTeam.id, this.teamForm);
+      this.adminService.updateTeam(this.editingTeam.teamId, this.teamForm).subscribe({
+        next: () => { this.loadTeams(); this.closeTeamModal(); },
+        error: (err) => console.error('Failed to update team:', err)
+      });
     } else {
-      this.adminService.addTeam(this.module.id, this.teamForm);
+      this.adminService.addTeam(this.teamForm).subscribe({
+        next: () => { this.loadTeams(); this.closeTeamModal(); },
+        error: (err) => console.error('Failed to add team:', err)
+      });
     }
-    this.closeTeamModal();
   }
 
-  deleteTeam(event: MouseEvent, team: Team): void {
+  deleteTeam(event: MouseEvent, team: TeamDTO): void {
     event.stopPropagation();
-    this.adminService.deleteTeam(this.module.id, team.id);
+    this.adminService.deleteTeam(team.teamId).subscribe({
+      next: () => this.loadTeams(),
+      error: (err) => console.error('Failed to delete team:', err)
+    });
   }
 
   onTeamOverlayClick(event: MouseEvent): void {
@@ -67,13 +87,5 @@ export class ModuleCardComponent {
     }
   }
 
-  // --- Roles ---
 
-  toggleRole(role: Role): void {
-    role.expanded = !role.expanded;
-  }
-
-  onFeatureToggle(roleId: number, featureId: number): void {
-    this.adminService.toggleFeature(this.module.id, roleId, featureId);
-  }
 }
