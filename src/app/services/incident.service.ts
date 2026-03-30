@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Incident, CreateIncidentRequest } from '../models/incident.model';
 
@@ -12,11 +12,15 @@ export class IncidentService {
   constructor(private http: HttpClient) {}
 
   getIncidents(): Observable<Incident[]> {
-    return this.http.get<Incident[]>(this.apiUrl);
+    console.log('Fetching incidents from API'+`: ${this.apiUrl}/incident-list`);
+    return this.http.get<Incident[]>(`${this.apiUrl}/incident-list`);
   }
 
-  getIncidentById(id: number): Observable<Incident> {
-    return this.http.get<Incident>(`${this.apiUrl}/${id}`);
+  getIncidentById(incidentId: number): Observable<Incident> {
+    const params = new HttpParams().set('incidentId', incidentId.toString());
+    return this.http.get<Incident>(`${this.apiUrl}/incident-details`, { params });
+    
+     return this.http.get<Incident>(`${this.apiUrl}/incident-details`, { params: { id: incidentId.toString() } });
   }
 
   addIncident(data: CreateIncidentRequest): Observable<Incident> {
@@ -24,11 +28,13 @@ export class IncidentService {
   }
 
   updateIncident(id: number, data: Partial<CreateIncidentRequest>): Observable<Incident> {
-    return this.http.put<Incident>(`${this.apiUrl}/${id}`, data);
+    const params = new HttpParams().set('incidentId', id.toString());
+    return this.http.put<Incident>(`${this.apiUrl}/update-incident`, data, { params });
   }
 
   deleteIncident(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    const params = new HttpParams().set('incidentId', id.toString());
+    return this.http.delete<void>(`${this.apiUrl}/delete-incident`, { params });
   }
 }
 

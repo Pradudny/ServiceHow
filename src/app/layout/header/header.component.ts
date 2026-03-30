@@ -10,8 +10,13 @@ export class HeaderComponent {
   appName = 'ServiceHow';
 
   @Output() toggleSideNav = new EventEmitter<void>();
+  @Output() logout = new EventEmitter<void>();
 
   onToggleSideNav(): void {
     this.toggleSideNav.emit();
+  }
+
+  onLogout(): void {
+    this.logout.emit();
   }
 }

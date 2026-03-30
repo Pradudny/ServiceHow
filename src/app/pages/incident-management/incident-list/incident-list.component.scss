@@ -145,3 +145,28 @@
     border-color: var(--accent);
   }
 }
+
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+
+  &:hover {
+    color: var(--accent);
+    background-color: var(--accent-soft);
+    border-color: var(--accent);
+  }
+}
+  .empty-state {
+    padding: 24px;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+  }

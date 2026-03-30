@@ -26,8 +26,7 @@ export class CreateIncidentModalComponent implements OnInit {
     assignedTo:0,
     status: 'OPEN' as Incident['status'],
     priority: 'MEDIUM',
-    assignmentGroup: '',
-    createdBy: ''
+    assignmentGroup: ''
   };
 
   constructor(private userService: UserService) {}
@@ -50,8 +49,7 @@ export class CreateIncidentModalComponent implements OnInit {
         assignedTo: this.incident.assignedToId,
         status: this.incident.status,
         priority: this.incident.priority || 'MEDIUM',
-        assignmentGroup: this.incident.assignmentGroup || '',
-        createdBy: this.incident.createdBy || ''
+        assignmentGroup: this.incident.assignmentGroup || ''
       };
     }
   }
@@ -76,7 +74,7 @@ export class CreateIncidentModalComponent implements OnInit {
     const request: CreateIncidentRequest = {
       title: this.form.title.trim(),
       description: this.form.description.trim(),
-      createdBy: this.form.createdBy.trim(),
+      createdBy: this.incident ? this.incident.createdBy : '',
       createdDate,
       modifiedBy: '',
       modifiedDate: now,

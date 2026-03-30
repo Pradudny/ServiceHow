@@ -1,0 +1,68 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>User Registration</h1>
+    <p>Register a new user using the backend registration API.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="userFname">First Name</label>
+        <input id="userFname" name="userFname" type="text" [(ngModel)]="registerForm.userFname" required>
+      </div>
+      <div class="form-group">
+        <label for="userLname">Last Name</label>
+        <input id="userLname" name="userLname" type="text" [(ngModel)]="registerForm.userLname" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="department">Department</label>
+        <input id="department" name="department" type="text" [(ngModel)]="registerForm.department" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="birthDate">Birth Date</label>
+        <input id="birthDate" name="birthDate" type="date" [(ngModel)]="registerForm.birthDate" required>
+      </div>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input id="address" name="address" type="text" [(ngModel)]="registerForm.address" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" [(ngModel)]="registerForm.email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" [(ngModel)]="registerForm.password" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input id="phoneNumber" name="phoneNumber" type="tel" pattern="[0-9]{10}" [(ngModel)]="registerForm.phoneNumber" required>
+      </div>
+      <div class="form-group">
+        <label for="createdBy">Created By</label>
+        <input id="createdBy" name="createdBy" type="text" [(ngModel)]="registerForm.createdBy">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-primary" (click)="registerUser()" [disabled]="isSubmitting || !registerForm.userFname || !registerForm.userLname || !registerForm.department || !registerForm.birthDate || !registerForm.address || !registerForm.email || !registerForm.password || !registerForm.phoneNumber">
+        {{ isSubmitting ? 'Submitting...' : 'Register User' }}
+      </button>
+    </div>
+
+    <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+    <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>

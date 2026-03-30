@@ -26,9 +26,8 @@ export class UsersDetailComponent implements OnInit {
     birthDate: '',
     address: '',
     email: '',
-    phoneNumber: 0,
-    createdBy: ''
-  };
+    phoneNumber: 0
+    };
 
   constructor(
     private adminService: AdminService,
@@ -37,7 +36,7 @@ export class UsersDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
-    this.allRoles = this.adminService.getAllRoleNames();
+    // this.allRoles = this.adminService.getRolesFeatures();
   }
 
   loadUsers(): void {
@@ -55,7 +54,7 @@ export class UsersDetailComponent implements OnInit {
     this.editingUser = null;
     this.userForm = {
       userFname: '', userLname: '', department: '', urole: '',
-      birthDate: '', address: '', email: '', phoneNumber: 0, createdBy: ''
+      birthDate: '', address: '', email: '', phoneNumber: 0
     };
     this.showModal = true;
   }
@@ -71,7 +70,6 @@ export class UsersDetailComponent implements OnInit {
       address: user.address,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      createdBy: user.createdBy
     };
     this.showModal = true;
   }

@@ -1,0 +1,30 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Login</h1>
+    <p>Sign in with your email and password to continue.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" [(ngModel)]="loginForm.email" placeholder="Enter your email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" [(ngModel)]="loginForm.password" placeholder="Enter your password" required>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-primary" (click)="login()" [disabled]="isSubmitting || !loginForm.email || !loginForm.password">
+        {{ isSubmitting ? 'Signing in...' : 'Login' }}
+      </button>
+    </div>
+
+    <p class="register-redirect">
+      New user? <a routerLink="/register">Register here</a>
+    </p>
+
+    <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>

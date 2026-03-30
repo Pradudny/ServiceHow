@@ -89,4 +89,17 @@ export class IncidentListComponent implements OnInit {
     };
     return labels[status] || status;
   }
+
+  deleteIncident(event: MouseEvent, incident: Incident): void {
+    event.stopPropagation();
+    const confirmed = window.confirm(`Delete incident "${incident.title}"?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.incidentService.deleteIncident(incident.incidentId).subscribe({
+      next: () => this.loadIncidents(),
+      error: (err) => console.error('Failed to delete incident:', err)
+    });
+  }
 }

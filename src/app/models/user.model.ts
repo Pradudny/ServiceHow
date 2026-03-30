@@ -8,6 +8,4 @@ export interface UserDTO {
   address: string;
   email: string;
   phoneNumber: number;
-  createdBy: string;
-  createdDate: string;
 }
