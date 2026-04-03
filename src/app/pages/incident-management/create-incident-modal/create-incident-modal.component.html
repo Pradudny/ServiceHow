@@ -32,11 +32,9 @@
           <label for="assignedTo">Assigned To <span class="required">*</span></label>
           <select id="assignedTo" [(ngModel)]="form.assignedTo">
             <option [ngValue]="0" disabled>Select assignee</option>
-            @for (user of users; track user.userId) {
-              <option [ngValue]="user.userId">
-                {{ user.userFname }} {{ user.userLname }}
-              </option>
-            }
+            <option *ngFor="let user of users" [ngValue]="user.userId">
+              {{ user.userFname }} {{ user.userLname }}
+            </option>
           </select>
         </div>
       </div>

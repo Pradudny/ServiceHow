@@ -19,8 +19,6 @@ export class IncidentService {
   getIncidentById(incidentId: number): Observable<Incident> {
     const params = new HttpParams().set('incidentId', incidentId.toString());
     return this.http.get<Incident>(`${this.apiUrl}/incident-details`, { params });
-    
-     return this.http.get<Incident>(`${this.apiUrl}/incident-details`, { params: { id: incidentId.toString() } });
   }
 
   addIncident(data: CreateIncidentRequest): Observable<Incident> {

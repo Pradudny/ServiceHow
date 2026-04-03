@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NotificationComponent } from './notification/notification.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
+  imports: [CommonModule, NotificationComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

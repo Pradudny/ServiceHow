@@ -26,7 +26,8 @@ export class UsersDetailComponent implements OnInit {
     birthDate: '',
     address: '',
     email: '',
-    phoneNumber: 0
+    phoneNumber: 0,
+    createdBy: ''
     };
 
   constructor(
@@ -54,7 +55,8 @@ export class UsersDetailComponent implements OnInit {
     this.editingUser = null;
     this.userForm = {
       userFname: '', userLname: '', department: '', urole: '',
-      birthDate: '', address: '', email: '', phoneNumber: 0
+      birthDate: '', address: '', email: '', phoneNumber: 0,
+      createdBy: ''
     };
     this.showModal = true;
   }
@@ -70,6 +72,7 @@ export class UsersDetailComponent implements OnInit {
       address: user.address,
       email: user.email,
       phoneNumber: user.phoneNumber,
+      createdBy: user.createdBy ?? ''
     };
     this.showModal = true;
   }

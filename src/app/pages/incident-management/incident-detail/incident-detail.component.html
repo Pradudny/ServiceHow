@@ -1,5 +1,5 @@
 <div class="page-container">
-  @if (incident) {
+  <ng-container *ngIf="incident; else incidentNotFound">
     <div class="detail-header">
       <button class="btn-back" (click)="goBack()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -21,15 +21,13 @@
           </svg>
           Edit
         </button>
-        @if (incident.status !== 'RESOLVED' && incident.status !== 'CLOSED') {
-          <button class="btn-complete" (click)="completeIncident()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            Complete
-          </button>
-        }
+        <button *ngIf="incident.status !== 'RESOLVED' && incident.status !== 'CLOSED'" class="btn-complete" (click)="completeIncident()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Complete
+        </button>
       </div>
     </div>
 
@@ -60,18 +58,78 @@
         <p>{{ incident.description }}</p>
       </div>
     </div>
-  } @else {
+
+    <div class="task-card-wrapper">
+      <div class="task-header-row">
+        <h2>Tasks</h2>
+        <button class="btn-add" (click)="openAddTask()">Add Task</button>
+      </div>
+
+      <div *ngIf="showTaskForm" class="task-form">
+        <h3>{{ editingTask ? 'Edit Task' : 'New Task' }}</h3>
+        <div class="form-row">
+          <label>Task name</label>
+          <input type="text" [(ngModel)]="taskForm.taskName" placeholder="Task name" />
+        </div>
+        <div class="form-row">
+          <label>Description</label>
+          <textarea [(ngModel)]="taskForm.taskDesc" placeholder="Task description"></textarea>
+        </div>
+        <div class="form-row">
+          <label>Assigned to</label>
+          <select [(ngModel)]="taskForm.assignedTo">
+            <option [ngValue]="0" disabled>Select user</option>
+            <option *ngFor="let user of users" [ngValue]="user.userId">
+              {{ user.userFname }} {{ user.userLname }}
+            </option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Status</label>
+          <select [(ngModel)]="taskForm.status">
+            <option *ngFor="let status of taskStatuses" [ngValue]="status">{{ status }}</option>
+          </select>
+        </div>
+        <div class="task-form-actions">
+          <button class="btn-save" (click)="saveTask()">Save Task</button>
+          <button class="btn-cancel" (click)="cancelTaskForm()">Cancel</button>
+        </div>
+      </div>
+
+      <div *ngIf="tasks.length === 0" class="empty-tasks">No tasks have been created for this incident.</div>
+      <div *ngIf="tasks.length > 0" class="task-list">
+        <div class="task-card" *ngFor="let task of tasks">
+          <div class="task-card-header">
+            <h3>{{ task.taskName }}</h3>
+            <div class="task-actions">
+              <button class="task-edit" (click)="editTask(task)">Edit</button>
+              <button class="task-delete" (click)="deleteTask(task.taskId)">Delete</button>
+            </div>
+          </div>
+          <p>{{ task.taskDesc }}</p>
+          <div class="task-meta-grid">
+            <span><strong>Assigned To:</strong> {{ task.assignedTo.userFname }} {{ task.assignedTo.userLname }}</span>
+            <span><strong>Status:</strong> {{ task.status }}</span>
+          </div>
+          <div class="task-meta-grid">
+            <span><strong>Created:</strong> {{ task.createdDate }}</span>
+            <span><strong>Modified:</strong> {{ task.modifiedDate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #incidentNotFound>
     <div class="not-found">
       <h2>Incident not found</h2>
       <button class="btn-back" (click)="goBack()">Back to Incidents</button>
     </div>
-  }
+  </ng-template>
 </div>
 
-@if (showEditModal && incident) {
-  <app-create-incident-modal
-    [incident]="incident"
-    (close)="onModalClose()"
-    (save)="onModalSave($event)">
-  </app-create-incident-modal>
-}
+<app-create-incident-modal *ngIf="showEditModal && incident"
+  [incident]="incident"
+  (close)="onModalClose()"
+  (save)="onModalSave($event)">
+</app-create-incident-modal>

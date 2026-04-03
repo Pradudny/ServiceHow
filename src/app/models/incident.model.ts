@@ -1,3 +1,5 @@
+import { Task } from './task.model';
+
 export interface Incident {
   incidentId: number;
   title: string;
@@ -12,6 +14,7 @@ export interface Incident {
   slaDate: string;
   assignedTo: string;
   assignedToId: number;
+  tasks?: Task[];
 }
 
 export interface CreateIncidentRequest {
